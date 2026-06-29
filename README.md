@@ -23,9 +23,17 @@ A powerful, interactive TUI (Text User Interface) tool that uses AI to automatic
 ### Setup
 
 1. **Clone the repository & Setup virtual environment**:
+
+**For Linux / macOS users:**
 ```bash
 python3 -m venv venv
 ./venv/bin/pip install -r requirements.txt
+```
+
+**For Windows users:**
+```powershell
+python -m venv venv
+.\venv\Scripts\pip install -r requirements.txt
 ```
 
 2. **Configure your credentials**:
@@ -44,8 +52,15 @@ Rename `config.example.json` to `config.json` and fill in your details:
 ### Usage
 
 Simply run the interactive TUI:
+
+**Linux / macOS:**
 ```bash
 ./venv/bin/python tui.py
+```
+
+**Windows:**
+```powershell
+.\venv\Scripts\python tui.py
 ```
 
 ### Modes & Settings
@@ -72,9 +87,17 @@ You can modify the timing configuration directly through the TUI by selecting th
 ### 🚀 快速开始
 
 1. **拉取项目并配置虚拟环境**:
+
+**如果你是 Linux / macOS 用户:**
 ```bash
 python3 -m venv venv
 ./venv/bin/pip install -r requirements.txt
+```
+
+**如果你是 Windows 用户:**
+```powershell
+python -m venv venv
+.\venv\Scripts\pip install -r requirements.txt
 ```
 
 2. **配置账号信息**:
@@ -93,8 +116,15 @@ python3 -m venv venv
 ### 🎮 如何使用
 
 在终端直接运行以下命令进入交互式主界面：
+
+**Linux / macOS:**
 ```bash
 ./venv/bin/python tui.py
+```
+
+**Windows:**
+```powershell
+.\venv\Scripts\python tui.py
 ```
 
 ### ⚙️ 设置与调整
