@@ -74,7 +74,7 @@ def solve_single_problem(bot, problem_data, config, contest_id=None):
             
         with Progress(SpinnerColumn(), TextColumn("[progress.description]{task.description}"), transient=True) as progress:
             progress.add_task(description=f"Asking AI ({config['model']}) to write {language} code...", total=None)
-            code = ask_ai_for_code(problem_data, config['api_key'], config.get('base_url'), config['model'], language, error_feedback, api_proxy=config.get('api_proxy', 'http://127.0.0.1:7890'))
+            code = ask_ai_for_code(problem_data, config['api_key'], config.get('base_url'), config['model'], language, error_feedback, api_proxy=config.get('api_proxy'))
             
         if not code:
             console.print("[red]AI generation failed or returned nothing.[/red]")
@@ -112,7 +112,7 @@ def configure_settings(config):
     base_url = questionary.text("AI Base URL (例如 https://api.openai.com/v1):", default=config.get("base_url", "https://api.openai.com/v1")).ask()
     model = questionary.text("AI 模型名称 (例如 gpt-4o 或 gemini-1.5-pro):", default=config.get("model", "gemini-1.5-pro")).ask()
     language = questionary.select("提交语言 (OJ 支持的语言):", choices=["Python3", "C++", "C", "Java"], default=config.get("language", "Python3")).ask()
-    api_proxy = questionary.text("AI API Proxy 代理地址 (留空则不使用):", default=config.get("api_proxy", "http://127.0.0.1:7890")).ask()
+    api_proxy = questionary.text("AI API Proxy 代理地址 (留空则不使用):", default=config.get("api_proxy", "http://127.0.0.1:7890") if "api_proxy" not in config else config.get("api_proxy")).ask()
 
     console.print("\n[bold cyan]--- 策略时间配置 ---[/bold cyan]")
     human_min = questionary.text("人类模式 - 最小间隔时间 (分钟):", default=str(config.get("human_interval_min", 3))).ask()
@@ -136,10 +136,7 @@ def configure_settings(config):
     config["human_interval_max"] = float(human_max)
     config["machine_interval"] = int(machine_sec)
     config["rest_times"] = rest_times_str
-    if api_proxy:
-        config["api_proxy"] = api_proxy
-    elif "api_proxy" in config:
-        del config["api_proxy"]
+    config["api_proxy"] = api_proxy
     
     with open('config.json', 'w', encoding='utf-8') as f:
         json.dump(config, f, indent=2)
