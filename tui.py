@@ -155,72 +155,73 @@ def main():
             continue
             
         if action == "Solve a Single Problem":
-        prob_id = questionary.text("Enter Problem Display ID (e.g., GW001):").ask()
-        if not prob_id: return
-        problem_data = bot.get_problem(prob_id)
-        if problem_data:
-            solve_single_problem(bot, problem_data, config)
+            prob_id = questionary.text("Enter Problem Display ID (e.g., GW001):").ask()
+            if not prob_id: continue
+            problem_data = bot.get_problem(prob_id)
+            if problem_data:
+                solve_single_problem(bot, problem_data, config)
+            break
             
-    elif action == "Solve a Contest":
-        contest_id = questionary.text("Enter Contest ID (e.g., 359):").ask()
-        if not contest_id: return
-        
-        password = questionary.password("Enter Contest Password (leave blank if none):").ask()
-        
-        problems = bot.get_contest_problems(contest_id, password)
-        if not problems:
-            return
+        elif action == "Solve a Contest":
+            contest_id = questionary.text("Enter Contest ID (e.g., 359):").ask()
+            if not contest_id: continue
             
-        choices = []
-        for p in problems:
-            status_text = ""
-            if p.get("my_status") == 0:
-                status_text = " [已通过/AC]"
-            elif p.get("my_status") is not None:
-                status_text = " [尝试过/未通过]"
-                
-            display = f"{p.get('_id')} - {p.get('title')}{status_text}"
+            password = questionary.password("Enter Contest Password (leave blank if none):").ask()
             
-            # Default to checked if not passed
-            is_checked = (p.get("my_status") != 0)
-            choices.append(questionary.Choice(title=display, value=p, checked=is_checked))
-            
-        selected_problems = questionary.checkbox(
-            "Select problems to solve (空格: 选择, 回车: 确认, 'a': 全选, 'i': 反选):",
-            choices=choices
-        ).ask()
-        
-        if not selected_problems:
-            console.print("[yellow]No problems selected.[/yellow]")
-            return
-            
-        mode_choice = questionary.select(
-            "Select solving mode:",
-            choices=[
-                questionary.Choice("人类模式 (Human Mode) - 避开作息时间，随机间隔 3-5 分钟", "Human"),
-                questionary.Choice("机器模式 (Machine Mode) - 全天候运行，固定间隔 3 分钟", "Machine")
-            ]
-        ).ask()
-        
-        if not mode_choice:
-            return
-            
-        for i, p in enumerate(selected_problems):
-            if p.get("my_status") == 0:
-                console.print(f"\n[bold green]=== Skipping Problem {p.get('_id')} (Already Accepted) ===[/bold green]")
+            problems = bot.get_contest_problems(contest_id, password)
+            if not problems:
                 continue
                 
-            enforce_schedule(config, is_first=(i == 0), mode=mode_choice)
-            console.print(f"\n[bold magenta]=== Processing Problem {i+1}/{len(selected_problems)} ==-[/bold magenta]")
-            # For contests, the problem object returned by the list API might not have the full description
-            # We need to fetch the full details
-            full_problem = bot.get_contest_problem_details(p.get('_id'), contest_id)
-            if full_problem:
-                solve_single_problem(bot, full_problem, config, contest_id=contest_id)
-            else:
-                console.print(f"[red]Failed to fetch details for {p.get('_id')}[/red]")
-        
-        break # Exit the while loop after solving a contest or problem
+            choices = []
+            for p in problems:
+                status_text = ""
+                if p.get("my_status") == 0:
+                    status_text = " [已通过/AC]"
+                elif p.get("my_status") is not None:
+                    status_text = " [尝试过/未通过]"
+                    
+                display = f"{p.get('_id')} - {p.get('title')}{status_text}"
+                
+                # Default to checked if not passed
+                is_checked = (p.get("my_status") != 0)
+                choices.append(questionary.Choice(title=display, value=p, checked=is_checked))
+                
+            selected_problems = questionary.checkbox(
+                "Select problems to solve (空格: 选择, 回车: 确认, 'a': 全选, 'i': 反选):",
+                choices=choices
+            ).ask()
+            
+            if not selected_problems:
+                console.print("[yellow]No problems selected.[/yellow]")
+                continue
+                
+            mode_choice = questionary.select(
+                "Select solving mode:",
+                choices=[
+                    questionary.Choice("人类模式 (Human Mode) - 避开作息时间，随机间隔 3-5 分钟", "Human"),
+                    questionary.Choice("机器模式 (Machine Mode) - 全天候运行，固定间隔 3 分钟", "Machine")
+                ]
+            ).ask()
+            
+            if not mode_choice:
+                continue
+                
+            for i, p in enumerate(selected_problems):
+                if p.get("my_status") == 0:
+                    console.print(f"\n[bold green]=== Skipping Problem {p.get('_id')} (Already Accepted) ===[/bold green]")
+                    continue
+                    
+                enforce_schedule(config, is_first=(i == 0), mode=mode_choice)
+                console.print(f"\n[bold magenta]=== Processing Problem {i+1}/{len(selected_problems)} ==-[/bold magenta]")
+                # For contests, the problem object returned by the list API might not have the full description
+                # We need to fetch the full details
+                full_problem = bot.get_contest_problem_details(p.get('_id'), contest_id)
+                if full_problem:
+                    solve_single_problem(bot, full_problem, config, contest_id=contest_id)
+                else:
+                    console.print(f"[red]Failed to fetch details for {p.get('_id')}[/red]")
+            
+            break # Exit the while loop after solving a contest or problem
 
 
 if __name__ == "__main__":
