@@ -75,7 +75,7 @@ def solve_single_problem(bot, problem_data, config, contest_id=None):
             
         with Progress(SpinnerColumn(), TextColumn("[progress.description]{task.description}"), transient=True) as progress:
             progress.add_task(description=f"Asking AI ({config['model']}) to write {language} code...", total=None)
-            code = ask_ai_for_code(problem_data, config['api_key'], config.get('base_url'), config['model'], language, error_feedback)
+            code = ask_ai_for_code(problem_data, config['api_key'], config.get('base_url'), config['model'], language, error_feedback, api_proxy=config.get('api_proxy'))
             
         if not code:
             console.print("[red]AI generation failed or returned nothing.[/red]")
@@ -110,13 +110,19 @@ def configure_settings(config):
     default_rest = config.get("rest_times", "01:00-08:00, 12:00-13:00, 18:00-19:00")
     rest_times_str = questionary.text("防沉迷休息时段 (格式 HH:MM-HH:MM, 逗号分隔):", default=default_rest).ask()
     
-    if human_min is None or human_max is None or machine_sec is None or rest_times_str is None:
+    api_proxy = questionary.text("AI API Proxy 代理地址 (例如 http://127.0.0.1:7890，留空则不使用):", default=config.get("api_proxy", "")).ask()
+    
+    if human_min is None or human_max is None or machine_sec is None or rest_times_str is None or api_proxy is None:
         return config # Cancelled
         
     config["human_interval_min"] = float(human_min)
     config["human_interval_max"] = float(human_max)
     config["machine_interval"] = int(machine_sec)
     config["rest_times"] = rest_times_str
+    if api_proxy:
+        config["api_proxy"] = api_proxy
+    elif "api_proxy" in config:
+        del config["api_proxy"]
     
     with open('config.json', 'w', encoding='utf-8') as f:
         json.dump(config, f, indent=2)

@@ -32,6 +32,7 @@ class XMUOJBot:
         self.password = password
         self.base_oj_url = base_oj_url.rstrip('/')
         self.session = requests.Session()
+        self.session.trust_env = False # Disable OS proxies for the OJ requests
         
         if os.path.exists('cookies.json'):
             try:
@@ -179,9 +180,18 @@ def strip_html(html_str):
     soup = BeautifulSoup(html_str, "html.parser")
     return soup.get_text()
 
-def ask_ai_for_code(problem_data, api_key, base_url, model, language, error_feedback=""):
+def ask_ai_for_code(problem_data, api_key, base_url, model, language, error_feedback="", api_proxy=None):
     print(f"[*] Asking AI ({model}) to generate {language} code...")
-    client = OpenAI(api_key=api_key, base_url=base_url)
+    
+    import httpx
+    client_kwargs = {
+        "api_key": api_key,
+        "base_url": base_url,
+    }
+    if api_proxy:
+        client_kwargs["http_client"] = httpx.Client(proxy=api_proxy)
+        
+    client = OpenAI(**client_kwargs)
     
     title = problem_data.get('title', '')
     desc = strip_html(problem_data.get('description', ''))
