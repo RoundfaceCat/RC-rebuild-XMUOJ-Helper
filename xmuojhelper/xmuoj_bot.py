@@ -189,7 +189,9 @@ def ask_ai_for_code(problem_data, api_key, base_url, model, language, error_feed
         "base_url": base_url,
     }
     if api_proxy:
-        client_kwargs["http_client"] = httpx.Client(proxy=api_proxy)
+        client_kwargs["http_client"] = httpx.Client(proxy=api_proxy, trust_env=False)
+    else:
+        client_kwargs["http_client"] = httpx.Client(trust_env=False)
         
     client = OpenAI(**client_kwargs)
     
