@@ -14,24 +14,31 @@
 - 💾 **Cookie 会话缓存**：首次登录后自动缓存 Session，拒绝频繁登录触发系统风控。
 - 🎨 **可定制的代码规范**：你可以随时编辑根目录下的 `prompt_instruction.md` 文件。想要加注释？想要限定变量命名风格？直接用文字写在里面，AI 做题时会自动严格遵守。
 
-### 🚀 快速开始
+### 🚀 快速开始 (推荐方式)
 
-1. **拉取项目并配置虚拟环境**:
+得益于项目已被封装为标准 Pip 包，你无需下载源码，只需创建一个新的空文件夹用于存放配置文件，然后在其中配置虚拟环境并直接从 GitHub 安装即可：
 
 **如果你是 Linux / macOS 用户:**
 ```bash
+# 1. 创建并激活虚拟环境
 python3 -m venv venv
-./venv/bin/pip install .
+source venv/bin/activate
+
+# 2. 从 GitHub 直接安装最新版 (包含了所有依赖)
+pip install git+https://github.com/Duskydream/XMUOJ-Helper.git
 ```
 
 **如果你是 Windows 用户:**
 ```powershell
+# 1. 创建并激活虚拟环境
 python -m venv venv
-.\venv\Scripts\pip install .
-```
+.\venv\Scripts\activate
 
+# 2. 从 GitHub 直接安装最新版 (包含了所有依赖)
+pip install git+https://github.com/Duskydream/XMUOJ-Helper.git
+```
 2. **配置账号信息**:
-将 `config.example.json` 复制或重命名为 `config.json`，并填入你的账号密码及 API 密钥：
+在你刚刚创建的那个空文件夹下，新建一个名为 `config.json` 的文件，并填入你的账号密码及 API 密钥：
 ```json
 {
   "username": "你的用户名/学号",
@@ -45,19 +52,12 @@ python -m venv venv
 
 ### 🎮 如何使用
 
-在终端直接运行以下命令进入交互式主界面：
+在激活了虚拟环境的终端中，只要你当前处于包含了 `config.json` 的文件夹下，直接输入：
 
-**Linux / macOS:**
 ```bash
-./venv/bin/xmuoj
+xmuoj
 ```
-
-**Windows:**
-```powershell
-.\venv\Scripts\xmuoj
-```
-
-(如果你已经激活了虚拟环境，直接输入 `xmuoj` 即可)。
+即可进入交互式主界面！
 
 ### ⚙️ 设置与调整
 你完全不需要修改底层代码，只需直接在 TUI 主菜单中选择 **`Settings (配置时间策略)`**，即可通过交互式问答在终端内随时调整两种模式的间隔时间与休息时段！
