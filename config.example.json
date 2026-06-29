@@ -8,5 +8,6 @@
   "human_interval_min": 3.0,
   "human_interval_max": 5.0,
   "machine_interval": 180,
-  "rest_times": "01:00-08:00, 12:00-13:00, 18:00-19:00"
+  "rest_times": "01:00-08:00, 12:00-13:00, 18:00-19:00",
+  "api_proxy": "http://127.0.0.1:7890"
 }

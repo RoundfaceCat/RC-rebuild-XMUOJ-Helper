@@ -75,7 +75,7 @@ def solve_single_problem(bot, problem_data, config, contest_id=None):
             
         with Progress(SpinnerColumn(), TextColumn("[progress.description]{task.description}"), transient=True) as progress:
             progress.add_task(description=f"Asking AI ({config['model']}) to write {language} code...", total=None)
-            code = ask_ai_for_code(problem_data, config['api_key'], config.get('base_url'), config['model'], language, error_feedback, api_proxy=config.get('api_proxy'))
+            code = ask_ai_for_code(problem_data, config['api_key'], config.get('base_url'), config['model'], language, error_feedback, api_proxy=config.get('api_proxy', 'http://127.0.0.1:7890'))
             
         if not code:
             console.print("[red]AI generation failed or returned nothing.[/red]")
@@ -110,7 +110,7 @@ def configure_settings(config):
     default_rest = config.get("rest_times", "01:00-08:00, 12:00-13:00, 18:00-19:00")
     rest_times_str = questionary.text("防沉迷休息时段 (格式 HH:MM-HH:MM, 逗号分隔):", default=default_rest).ask()
     
-    api_proxy = questionary.text("AI API Proxy 代理地址 (例如 http://127.0.0.1:7890，留空则不使用):", default=config.get("api_proxy", "")).ask()
+    api_proxy = questionary.text("AI API Proxy 代理地址 (留空则不使用):", default=config.get("api_proxy", "http://127.0.0.1:7890")).ask()
     
     if human_min is None or human_max is None or machine_sec is None or rest_times_str is None or api_proxy is None:
         return config # Cancelled
