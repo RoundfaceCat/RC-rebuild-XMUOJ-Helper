@@ -5,9 +5,8 @@ from rich.progress import SpinnerColumn, TextColumn, Progress
 import sys
 import time
 import datetime
+from .xmuoj_bot import XMUOJBot, load_config, ask_ai_for_code
 import random
-from xmuoj_bot import XMUOJBot, load_config, ask_ai_for_code
-
 console = Console()
 
 import json

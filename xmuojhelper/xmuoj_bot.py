@@ -205,7 +205,11 @@ def ask_ai_for_code(problem_data, api_key, base_url, model, language, error_feed
         samples_str += f"Sample Input {idx}:\n{sample.get('input', '')}\nSample Output {idx}:\n{sample.get('output', '')}\n\n"
         
     try:
-        with open('prompt_instruction.md', 'r', encoding='utf-8') as f:
+        instruction_path = 'prompt_instruction.md'
+        if not os.path.exists(instruction_path):
+            pkg_dir = os.path.dirname(os.path.abspath(__file__))
+            instruction_path = os.path.join(pkg_dir, 'prompt_instruction.md')
+        with open(instruction_path, 'r', encoding='utf-8') as f:
             custom_instructions = f.read()
     except Exception:
         custom_instructions = ""
