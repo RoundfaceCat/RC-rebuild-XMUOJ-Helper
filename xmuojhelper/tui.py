@@ -101,6 +101,19 @@ def solve_single_problem(bot, problem_data, config, contest_id=None):
     return False
 
 def configure_settings(config):
+    console.print("\n[bold cyan]--- 全局设置 (Global Settings) ---[/bold cyan]")
+    
+    # Credentials
+    username = questionary.text("XMUOJ 用户名/学号:", default=config.get("username", "")).ask()
+    password = questionary.password("XMUOJ 密码:", default=config.get("password", "")).ask()
+    
+    # API Config
+    api_key = questionary.text("AI API Key:", default=config.get("api_key", "")).ask()
+    base_url = questionary.text("AI Base URL (例如 https://api.openai.com/v1):", default=config.get("base_url", "https://api.openai.com/v1")).ask()
+    model = questionary.text("AI 模型名称 (例如 gpt-4o 或 gemini-1.5-pro):", default=config.get("model", "gemini-1.5-pro")).ask()
+    language = questionary.select("提交语言 (OJ 支持的语言):", choices=["Python3", "C++", "C", "Java"], default=config.get("language", "Python3")).ask()
+    api_proxy = questionary.text("AI API Proxy 代理地址 (留空则不使用):", default=config.get("api_proxy", "http://127.0.0.1:7890")).ask()
+
     console.print("\n[bold cyan]--- 策略时间配置 ---[/bold cyan]")
     human_min = questionary.text("人类模式 - 最小间隔时间 (分钟):", default=str(config.get("human_interval_min", 3))).ask()
     human_max = questionary.text("人类模式 - 最大间隔时间 (分钟):", default=str(config.get("human_interval_max", 5))).ask()
@@ -109,10 +122,15 @@ def configure_settings(config):
     default_rest = config.get("rest_times", "01:00-08:00, 12:00-13:00, 18:00-19:00")
     rest_times_str = questionary.text("防沉迷休息时段 (格式 HH:MM-HH:MM, 逗号分隔):", default=default_rest).ask()
     
-    api_proxy = questionary.text("AI API Proxy 代理地址 (留空则不使用):", default=config.get("api_proxy", "http://127.0.0.1:7890")).ask()
-    
-    if human_min is None or human_max is None or machine_sec is None or rest_times_str is None or api_proxy is None:
+    if any(x is None for x in [username, password, api_key, base_url, model, language, api_proxy, human_min, human_max, machine_sec, rest_times_str]):
         return config # Cancelled
+        
+    config["username"] = username
+    config["password"] = password
+    config["api_key"] = api_key
+    config["base_url"] = base_url
+    config["model"] = model
+    config["language"] = language
         
     config["human_interval_min"] = float(human_min)
     config["human_interval_max"] = float(human_max)
@@ -134,8 +152,11 @@ def main():
     config = load_config()
     
     if not config.get('username') or not config.get('password') or not config.get('api_key'):
-        console.print("[red]Missing credentials in config.json. Please update it first.[/red]")
-        sys.exit(1)
+        console.print("[yellow]检测到尚未配置必要信息，进入首次设置向导...[/yellow]")
+        config = configure_settings(config)
+        if not config.get('username') or not config.get('password') or not config.get('api_key'):
+            console.print("[red]配置未完成，程序退出。[/red]")
+            sys.exit(1)
         
     bot = XMUOJBot(config['username'], config['password'])
     if not bot.login():
@@ -147,7 +168,7 @@ def main():
             choices=[
                 "Solve a Single Problem",
                 "Solve a Contest",
-                "Settings (配置时间策略)",
+                "Settings (全局设置)",
                 "Exit"
             ]
         ).ask()
@@ -155,7 +176,7 @@ def main():
         if action == "Exit" or not action:
             sys.exit(0)
             
-        if action == "Settings (配置时间策略)":
+        elif action == "Settings (全局设置)":
             config = configure_settings(config)
             continue
             
