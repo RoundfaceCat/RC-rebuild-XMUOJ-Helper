@@ -21,13 +21,13 @@
 **如果你是 Linux / macOS 用户:**
 ```bash
 python3 -m venv venv
-./venv/bin/pip install -r requirements.txt
+./venv/bin/pip install .
 ```
 
 **如果你是 Windows 用户:**
 ```powershell
 python -m venv venv
-.\venv\Scripts\pip install -r requirements.txt
+.\venv\Scripts\pip install .
 ```
 
 2. **配置账号信息**:
@@ -49,13 +49,15 @@ python -m venv venv
 
 **Linux / macOS:**
 ```bash
-./venv/bin/python tui.py
+./venv/bin/xmuoj
 ```
 
 **Windows:**
 ```powershell
-.\venv\Scripts\python tui.py
+.\venv\Scripts\xmuoj
 ```
+
+(如果你已经激活了虚拟环境，直接输入 `xmuoj` 即可)。
 
 ### ⚙️ 设置与调整
 你完全不需要修改底层代码，只需直接在 TUI 主菜单中选择 **`Settings (配置时间策略)`**，即可通过交互式问答在终端内随时调整两种模式的间隔时间与休息时段！
