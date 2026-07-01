@@ -189,7 +189,15 @@ def main():
             contest_id = questionary.text("Enter Contest ID (e.g., 359):").ask()
             if not contest_id: continue
             
-            password = questionary.password("Enter Contest Password (leave blank if none):").ask()
+            cached_pass = config.get("contest_passwords", {}).get(contest_id, "")
+            password = questionary.password("Enter Contest Password (leave blank if none):", default=cached_pass).ask()
+            
+            if password != cached_pass:
+                if "contest_passwords" not in config:
+                    config["contest_passwords"] = {}
+                config["contest_passwords"][contest_id] = password
+                with open('config.json', 'w', encoding='utf-8') as f:
+                    json.dump(config, f, indent=2)
             
             problems = bot.get_contest_problems(contest_id, password)
             if not problems:
