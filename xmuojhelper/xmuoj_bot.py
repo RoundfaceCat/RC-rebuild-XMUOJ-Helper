@@ -242,10 +242,15 @@ Samples:
         )
         code = response.choices[0].message.content.strip()
         # Remove markdown code blocks if the AI accidentally included them
-        if code.startswith("```"):
-            code = "\n".join(code.split("\n")[1:])
-        if code.endswith("```"):
-            code = "\n".join(code.split("\n")[:-1])
+        import re
+        matches = re.findall(r"```[^\n]*\n(.*?)```", code, re.DOTALL)
+        if matches:
+            code = matches[-1].strip()
+        else:
+            if code.startswith("```"):
+                code = "\n".join(code.split("\n")[1:])
+            if code.endswith("```"):
+                code = "\n".join(code.split("\n")[:-1])
         return code.strip()
     except Exception as e:
         print("[-] AI generation failed:", str(e))
