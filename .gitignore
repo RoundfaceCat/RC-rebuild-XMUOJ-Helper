@@ -3,6 +3,3 @@ __pycache__/
 *.pyc
 cookies.json
 config.json
-xmuojhelper.egg-info/
-build/
-dist/

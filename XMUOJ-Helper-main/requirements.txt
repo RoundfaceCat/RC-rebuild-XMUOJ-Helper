@@ -1,8 +1,0 @@
-requests
-openai
-beautifulsoup4
-urllib3
-socksio
-httpx[socks]
-rich
-questionary
